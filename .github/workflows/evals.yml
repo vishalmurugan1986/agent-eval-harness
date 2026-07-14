@@ -1,0 +1,38 @@
+name: evals
+
+# The gate. Every push and PR runs the suite in mock mode (no API key, fully
+# deterministic). If routing accuracy drops, an escalation gets missed, or an
+# injection slips through, run_evals exits non-zero and the check goes red.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  eval-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install deps
+        run: pip install -r requirements.txt
+
+      - name: ASCII source guard (fail loud on non-ASCII bytes)
+        run: python tests/test_ascii.py
+
+      - name: stdout hardening guard (tier-2 flush + GC-close)
+        run: python tests/test_stdout_hardening.py
+
+      - name: Run eval gate (mock)
+        run: python -m evals.run_evals --mock
+
+      - name: Upload run artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: eval-run
+          path: results/runs/*.json

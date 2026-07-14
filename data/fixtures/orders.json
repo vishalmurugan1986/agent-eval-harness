@@ -1,0 +1,29 @@
+{
+  "A1001": {
+    "order_id": "A1001",
+    "status": "shipped",
+    "carrier": "UPS",
+    "tracking": "1Z999AA10123456784",
+    "eta": "2026-07-14",
+    "items": ["Wireless Headphones"],
+    "total": "89.99"
+  },
+  "A1002": {
+    "order_id": "A1002",
+    "status": "delivered",
+    "carrier": "USPS",
+    "tracking": "9400100000000000000000",
+    "eta": "2026-07-02",
+    "items": ["Yoga Mat", "Water Bottle"],
+    "total": "47.50"
+  },
+  "A1003": {
+    "order_id": "A1003",
+    "status": "processing",
+    "carrier": null,
+    "tracking": null,
+    "eta": "2026-07-18",
+    "items": ["Standing Desk"],
+    "total": "312.00"
+  }
+}
