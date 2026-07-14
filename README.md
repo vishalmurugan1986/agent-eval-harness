@@ -1,5 +1,7 @@
 # Support Ticket Triage Agent -- with a first-class eval harness
 
+[![evals](https://github.com/vishalmurugan1986/agent-eval-harness/actions/workflows/evals.yml/badge.svg)](https://github.com/vishalmurugan1986/agent-eval-harness/actions/workflows/evals.yml)
+
 An LLM agent that triages customer support tickets -- category, auto-resolve vs.
 escalate, drafted reply -- wrapped in an evaluation harness that treats
 measurement as the product. The agent runs on open-weight models
