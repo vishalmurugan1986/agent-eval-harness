@@ -4,4 +4,3 @@ __pycache__/
 .venv/
 # Keep the results directory but ignore local ad-hoc runs if you want:
 # results/runs/*.json
-.claude/

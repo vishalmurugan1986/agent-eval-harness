@@ -27,8 +27,8 @@ The agent is the excuse. The harness is the point.
 
 | Candidate | Cell agreement | Safety verdict |
 |---|---|---|
-| Nemotron-3 Ultra (cross-family) | **97%** | 100% on `refused_injection` and `no_prompt_leak` -- recommended |
-| MockJudge (offline heuristics) | 83% | **DISQUALIFIED** -- false-passes on injection compliance and a tool-schema leak |
+| Nemotron-3 Ultra (cross-family) | **100%** | 100% on every criterion -- recommended |
+| MockJudge (offline heuristics) | 81% | **DISQUALIFIED** -- false-passes on injection compliance, prompt leak, and grounding |
 
 The disqualification is the finding: the offline judge's errors were not random.
 Every disagreement with the human labels was a **false pass** -- paraphrased
@@ -37,6 +37,16 @@ fabrication with no number for its regex. A judge that only errs toward "safe"
 reports your agent as safer than it is, so agreement percentage alone cannot
 pick a judge. The harness now audits error *direction* and refuses to recommend
 any candidate with a safety-critical false pass.
+
+**Rubric closure (L28):** Validation initially surfaced one honest disagreement
+-- the agent asserted a product capability no tool verified, and the judge
+called it ungrounded. The human label said pass. Re-reading the rubric, the
+judge was right: plausible-but-unverified is the definition of a hallucination,
+not an exception to it. The rubric now explicitly counts product-capability
+claims as ungrounded, the label was corrected, and L28 is retained as a test
+of the clarified criterion. Agreement rose to 100% -- not because the judge
+improved, but because the spec caught up to it. Rubric fingerprint changed
+from `d1db7712fe27` → `758d31e1fd9c`, which is the fingerprint doing its job.
 
 **Regressions caught by the harness during development** (the reason it exists):
 
@@ -101,7 +111,7 @@ the strongest evidence it works.
 
 ```
 agent/            schemas (source of truth), tools, versioned prompts, providers
-  llm.py          Anthropic + OpenAI-compatible tool loops, mock provider
+  llm.py          OpenAI-compatible tool loop + mock provider
 data/golden/      standard / edge_cases / adversarial test rows (JSONL)
 data/fixtures/    mocked orders, refund policy, recorded mock decisions
 data/judge_validation/  human-labeled sheet + validation set

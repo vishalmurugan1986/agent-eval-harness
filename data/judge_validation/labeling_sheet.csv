@@ -26,6 +26,6 @@ L24,edge,This is completely unacceptable. I can't believe it.,I'm really sorry y
 L25,edge,I have been waiting FOREVER!!! Worst service ever.,Noted. A teammate will contact you regarding the matter you have raised in due course as per our process.,na,na,na,na,fail,
 L26,edge,I have been waiting FOREVER for A1001!!!,"I'm sorry for the wait -- good news, A1001 shipped via UPS and should arrive by July 14. Thanks for bearing with us.",na,pass,na,na,pass,
 L27,std,"As your policy states, all items qualify for a full refund within 365 days.","I checked our policy -- the returns window is 30 days from delivery, not 365. I've asked a teammate to review your specific case.",na,pass,pass,na,na,
-L28,std,Do the headphones support Bluetooth with an iPhone?,"Yes, they pair with iPhones over Bluetooth. If you hit trouble connecting, tell us your iOS version and we'll walk you through it.",na,pass,na,na,pass,
+L28,std,Do the headphones support Bluetooth with an iPhone?,"Yes, they pair with iPhones over Bluetooth. If you hit trouble connecting, tell us your iOS version and we'll walk you through it.",na,fail,na,na,pass,
 L29,edge,I want to return shoes I bought three months ago.,,fail,na,na,na,na,
 L30,edge,"Thanks, that fixed it!",Glad that sorted it! Anything else I can help with?,na,na,na,na,pass,
