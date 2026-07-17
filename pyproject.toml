@@ -1,0 +1,55 @@
+# Packaging for agent-eval-harness (PROJ1).
+#
+# This exists so downstream projects (e.g. agent-cost-router / PROJ2) can install
+# the harness as a dependency and import its grader directly:
+#     from agent.schemas import Decision, Ticket
+#     from evals.deterministic import evaluate
+#     from evals.judge import MockJudge, OpenAICompatJudge
+#     from evals.run_evals import aggregate
+#
+# Runtime dependencies are intentionally minimal: importing the schema and the
+# grader needs only pydantic (data contracts) and openai (the OpenAI-compatible
+# client used by the live provider/judge). vLLM and any model-serving stack are
+# an *operational* concern for running your own endpoint -- they are NOT needed
+# to import or run the grading code, so they are deliberately not declared here.
+
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "agent-eval-harness"
+version = "0.1.0"
+description = "Dual-layer evaluation harness for LLM agents: deterministic checks + a validated LLM-as-judge, with CI gates and reproducible run snapshots."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "vishalmurugan1986" }]
+dependencies = [
+    "pydantic>=2.0,<3",
+    "openai>=1.40,<2",
+]
+
+[project.optional-dependencies]
+# Test/lint tooling. Not required to import the package as a dependency.
+dev = ["pytest>=7"]
+
+[project.scripts]
+# Convenience CLIs. These assume the referenced modules expose a `main()`
+# (PROJ1's eval runner does; the agent CLI in agent/main.py typically does too).
+# If a signature differs in your tree, delete the offending line -- it does not
+# affect importability, which is all PROJ2 needs.
+agent-evals = "evals.run_evals:main"
+agent-triage = "agent.main:main"
+
+[tool.setuptools]
+# Explicit package list: ship exactly the two importable packages and nothing
+# else (no tests/, no data/). Being explicit avoids setuptools auto-discovery
+# accidentally packaging or refusing to build because of extra top-level dirs.
+packages = ["agent", "evals"]
+
+# NOTE on data files: PROJ1's golden rows and fixtures under data/ are loaded by
+# filesystem path relative to the repo, and PROJ2 does NOT import PROJ1's data
+# (it ships its own). So no package-data mapping is needed here. If you later
+# want `pip install`ed copies of PROJ1 to carry their own golden set, add a
+# [tool.setuptools.package-data] section and move the data under a package dir.
