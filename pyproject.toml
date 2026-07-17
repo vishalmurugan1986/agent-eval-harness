@@ -48,6 +48,10 @@ agent-triage = "agent.main:main"
 # accidentally packaging or refusing to build because of extra top-level dirs.
 packages = ["agent", "evals"]
 
+[tool.setuptools.package-data]
+agent = ["prompts/*.md"]
+evals = ["rubrics/*.md"]
+
 # NOTE on data files: PROJ1's golden rows and fixtures under data/ are loaded by
 # filesystem path relative to the repo, and PROJ2 does NOT import PROJ1's data
 # (it ships its own). So no package-data mapping is needed here. If you later
