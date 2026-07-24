@@ -1,0 +1,29 @@
+[project]
+name = "agent-eval-harness"
+version = "0.1.0"
+description = "Support-triage agent + dual-layer eval harness (deterministic + LLM-as-judge) with judge calibration against human labels."
+requires-python = ">=3.11"
+dependencies = [
+    "pydantic>=2.6",
+    "openai>=1.30",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+# Only ship the importable library code. data/, results/, tests/, and the
+# CLI entry scripts (run_evals.py, validate_judge.py) stay in the repo but
+# aren't part of the installed package -- consumers like model-router-bench
+# just need `agent` and `evals` as import targets.
+[tool.setuptools.packages.find]
+include = ["agent*", "evals*"]
+
+[tool.setuptools.package-data]
+# Bundle the rubric and prompt files since evals/judge.py and agent/llm.py
+# load them from disk at import/runtime.
+evals = ["rubrics/*.md"]
+agent = ["prompts/*.md"]
