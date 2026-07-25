@@ -1,9 +1,9 @@
-# Support Ticket Triage Agent -- with a first-class eval harness
+# Support Ticket Triage Agent — with a first-class eval harness
 
 [![evals](https://github.com/vishalmurugan1986/agent-eval-harness/actions/workflows/evals.yml/badge.svg)](https://github.com/vishalmurugan1986/agent-eval-harness/actions/workflows/evals.yml)
 
-An LLM agent that triages customer support tickets -- category, auto-resolve vs.
-escalate, drafted reply -- wrapped in an evaluation harness that treats
+An LLM agent that triages customer support tickets — category, auto-resolve vs.
+escalate, drafted reply — wrapped in an evaluation harness that treats
 measurement as the product. The agent runs on open-weight models
 (`gpt-oss-120b`), is graded by a cross-family LLM judge
 (`nemotron-3-ultra-550b-a55b`), and every metric below is reproducible from a
@@ -27,11 +27,11 @@ The agent is the excuse. The harness is the point.
 
 | Candidate | Cell agreement | Safety verdict |
 |---|---|---|
-| Nemotron-3 Ultra (cross-family) | **100%** | 100% on every criterion -- recommended |
-| MockJudge (offline heuristics) | 81% | **DISQUALIFIED** -- false-passes on injection compliance, prompt leak, and grounding |
+| Nemotron-3 Ultra (cross-family) | **100%** | 100% on every criterion — recommended |
+| MockJudge (offline heuristics) | 81% | **DISQUALIFIED** — false-passes on injection compliance, prompt leak, and grounding |
 
 The disqualification is the finding: the offline judge's errors were not random.
-Every disagreement with the human labels was a **false pass** -- paraphrased
+Every disagreement with the human labels was a **false pass** — paraphrased
 compliance its marker strings missed, a natural-language schema leak, a
 fabrication with no number for its regex. A judge that only errs toward "safe"
 reports your agent as safer than it is, so agreement percentage alone cannot
@@ -39,12 +39,12 @@ pick a judge. The harness now audits error *direction* and refuses to recommend
 any candidate with a safety-critical false pass.
 
 **Rubric closure (L28):** Validation initially surfaced one honest disagreement
--- the agent asserted a product capability no tool verified, and the judge
+— the agent asserted a product capability no tool verified, and the judge
 called it ungrounded. The human label said pass. Re-reading the rubric, the
 judge was right: plausible-but-unverified is the definition of a hallucination,
 not an exception to it. The rubric now explicitly counts product-capability
 claims as ungrounded, the label was corrected, and L28 is retained as a test
-of the clarified criterion. Agreement rose to 100% -- not because the judge
+of the clarified criterion. Agreement rose to 100% — not because the judge
 improved, but because the spec caught up to it. Rubric fingerprint changed
 from `d1db7712fe27` → `758d31e1fd9c`, which is the fingerprint doing its job.
 
@@ -55,8 +55,8 @@ from `d1db7712fe27` → `758d31e1fd9c`, which is the fingerprint doing its job.
 | Agent chose `escalate_human` without calling the `escalate` tool | 18% tool-use | 96% | deterministic tool-call check, separate from action check |
 | Missed escalations on adversarial tickets | 5 | 0 | blocker gate |
 | Adversarial tickets misrouted as `complaint` | 64% routing | 86% | routing accuracy gate |
-| Judge failed correct replies as hallucinations (couldn't see tool outputs) | -- | fixed | judge validation disagreements, named per row |
-| Lost `detach()` fix silently reintroduced a double-buffer bug | -- | fixed | its own regression test (`tests/test_stdout_hardening.py`) went red |
+| Judge failed correct replies as hallucinations (couldn't see tool outputs) | — | fixed | judge validation disagreements, named per row |
+| Lost `detach()` fix silently reintroduced a double-buffer bug | — | fixed | its own regression test (`tests/test_stdout_hardening.py`) went red |
 | MockJudge flag-vocabulary drift zeroed the injection metric | 0% refusal | 100% | the mock gate itself went red |
 
 ## Design decisions that carry the weight
@@ -66,14 +66,14 @@ Pydantic schema (category, action, tool calls, reply). That is what makes exact-
 match evaluation possible; free text cannot be graded deterministically.
 
 **Two grading layers with different jobs.** Deterministic checks grade the
-gradeable -- category, action, and *which tools were actually called*, observed
+gradeable — category, action, and *which tools were actually called*, observed
 from the tool loop rather than trusted from the model's self-report. An LLM
 judge grades the reply with **binary criteria** (invented a policy: yes/no),
 not 1-10 scores, which drift and cannot be thresholded.
 
 **The judge sees what the agent saw.** Judge prompts include the executed tool
 outputs as context. Without this, a literal judge fails correct replies as
-hallucinations -- it was measuring its own blindness, and the validation set
+hallucinations — it was measuring its own blindness, and the validation set
 caught it doing so.
 
 **Cross-family agent/judge split.** The agent runs on gpt-oss (OpenAI lineage),
@@ -86,25 +86,25 @@ followed injection fails the build. Routing and tool accuracy are threshold
 gates. A 96% suite pass with a single missed escalation is a failed run.
 
 **Human labels are the only ground truth for the judge.** The 30-row validation
-set was labeled blind by a human, with the answer-key hints stripped first --
+set was labeled blind by a human, with the answer-key hints stripped first —
 because a judge validated against another model's labels measures correlation
 between models, not correctness. The converter enforces label/target
 consistency in both directions and refuses to run on an incomplete sheet.
 
 **Everything fails loudly.** An empty golden glob, an unlabeled cell, a
-non-ASCII byte in source, a rewrapped stdout that loses its buffer -- each is a
+non-ASCII byte in source, a rewrapped stdout that loses its buffer — each is a
 build failure, not a silent pass. A check that cannot fail is not a check.
 
 ## The recurring lesson
 
-Every bug this project caught -- in the agent, the judge, the harness, and the
-harness's own tests -- had the same shape: **a proxy standing in for ground
+Every bug this project caught — in the agent, the judge, the harness, and the
+harness's own tests — had the same shape: **a proxy standing in for ground
 truth.** A suite tag standing in for what a row tests. Reply length standing in
 for tone. Marker strings standing in for compliance. A grep over hint text
 standing in for a count. Model agreement standing in for correctness. Each was
 cheaper than the truth and almost right, and each failed silently in the case
 that mattered most. The harness exists to force those proxies to prove
-themselves, and it has caught its own author's proxies repeatedly -- which is
+themselves, and it has caught its own author's proxies repeatedly — which is
 the strongest evidence it works.
 
 ## Layout
@@ -132,7 +132,7 @@ results/          timestamped run + judge-validation snapshots
 ```bash
 pip install -r requirements.txt
 
-# Offline gate -- recorded responses, no API key. This is what CI runs.
+# Offline gate — recorded responses, no API key. This is what CI runs.
 python -m evals.run_evals --mock
 
 # Live run against an OpenAI-compatible endpoint (vLLM / TGI / Ollama)
@@ -147,18 +147,23 @@ python -m evals.validate_judge --data data/judge_validation/labeled_replies.manu
 ```
 
 Every run writes a timestamped snapshot (`results/`), stamped with the prompt
-version and -- for judge runs -- a fingerprint of the rubric, so when a number
+version and — for judge runs — a fingerprint of the rubric, so when a number
 moves you can tell whether the judge changed or the rubric did.
 
 ## Known limits, stated plainly
 
 - The golden set is 22 rows; the labeled set is 30. Both are seeds. Coverage is
   the ceiling on every claim above, and growing it is permanent, ongoing work.
-- MockJudge remains in the loop for CI because it is free and deterministic --
+- MockJudge remains in the loop for CI because it is free and deterministic —
   but it is disqualified as a quality judge and used only as a smoke check.
   Its blind spots (fabrications without numbers, persona adoption, cold tone)
   are documented in the taxonomy and covered by the LLM judge.
 - One open rubric question, found by validation: the judge fails unverifiable
   product claims as ungrounded where the human passed them (row L28). That is a
-  genuine ambiguity in what "grounded" means, not a judge error -- kept visible
+  genuine ambiguity in what "grounded" means, not a judge error — kept visible
   rather than papered over.
+
+## What's Next
+
+- **Continuous online evaluation**: Move the evaluation from a discrete batch job on a static golden set into a continuous monitoring process over a sample of live production traffic (see Project 3).
+- **Curriculum-driven testing**: Evolve the static golden sets by programmatically generating edge cases targeting the specific failure modes discovered during previous eval runs.
